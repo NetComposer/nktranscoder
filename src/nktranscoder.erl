@@ -18,13 +18,20 @@
 %%
 %% -------------------------------------------------------------------
 -module(nktranscoder).
--export([connect/2, transcode/4]).
+-export([transcode/2]).
 
-connect(Config, Callback) ->
-    {ok, Pid } = nktranscoder_protocol:start(Config, Callback),
-    {ok, Pid }.
+-spec transcode(nkservice:id(), nkfile:file()) ->
+    ok | {error, term()}.
 
-transcode(Pid, Source, Dest, Mime) ->
-    nktranscoder_protocol:send(Pid, #{ inputPath => Source,
-                                     outputPath => Dest,
-                                     content_type => Mime}).
+transcode(SrvId, File) ->
+    case nkfile:download(SrvId, File) of
+        {ok, File, _Bin} ->
+            case SrvId:config() of
+                #{ transcoder := Transcoder } ->
+                    SrvId:nktranscoder_transcode(SrvId, Transcoder, File);
+                _ ->
+                    {error, missing_transcoder_config}
+            end;
+        {error, Error} ->
+            {error, Error}
+    end.

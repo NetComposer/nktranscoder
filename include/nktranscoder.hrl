@@ -17,27 +17,9 @@
 %% under the License.
 %%
 %% -------------------------------------------------------------------
--module(nktranscoder_app).
--behaviour(application).
--export([start/2, stop/1]).
--include("nktranscoder.hrl").
-
-start(_StartType, _StartArgs) ->
-    Syntax = #{transcoders => {list, map}},
-    case nklib_config:load_env(?APP, Syntax) of
-        {ok, _} ->
-            {ok, Vsn} = application:get_key(?APP, vsn),
-            lager:info("NkTranscoder v~s is starting", [Vsn]),
-            ok = nktranscoder_protocol:register(),
-            {ok, Pid} = nktranscoder_sup:start_link(),
-            {ok, Pid};
-        {error, Error} ->
-            lager:error("Error parsing config: ~p", [Error]),
-            error({syntax_error, Error})
-    end.
-
-stop(_State) ->
-    ok.
-
-
-
+-define(APP, nktranscoder).
+-define(LOG(Level, Txt, Args), lager:Level("nktranscoder "++Txt, Args)).
+-define(INFO(Txt, Args), ?LOG(info, Txt, Args)).
+-define(DEBUG(Txt, Args), ?LOG(debug, Txt, Args)).
+-define(ERROR(Txt, Args), ?LOG(error, Txt, Args)).
+-define(WARN(Txt, Args), ?LOG(warn, Txt, Args)).

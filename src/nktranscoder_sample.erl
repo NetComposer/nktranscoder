@@ -32,12 +32,12 @@ test() ->
     ok = nktranscoder_protocol:register(),
     Config = #{ config => #{ server => <<"transcoder://s1.netc.io/transcode">>,
                              user => <<"netcomposer">>,
-                             password => <<"wint">>}},
+                             password => <<"burgerenhavacoyunawint">>}},
     
     {ok, Pid } = nktranscoder:connect(Config, ?MODULE),
-    nktranscoder:transcode(Pid, <<"/data/file-6kCmH0rnT8VRluj9eNHqf3TG3zB">>, 
-                          <<"/data/erlang-test.mp4">>,
-                          <<"video/x-flv">> ).
+    nktranscoder:transcode(Pid, {s3, <<"/data/file-6kCmH0rnT8VRluj9eNHqf3TG3zB">>}, 
+                                {s3, <<"/data/erlang-test.mp4">>},
+                                <<"video/x-flv">> ).
 
 transcoder_disconnected(Pid) ->
     io:format("transcoder disconnected Pid: ~p~n", [Pid]).
