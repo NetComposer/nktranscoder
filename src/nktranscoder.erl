@@ -20,18 +20,20 @@
 -module(nktranscoder).
 -export([transcode/2]).
 
--spec transcode(nkservice:id(), nkfile:file()) ->
-    ok | {error, term()}.
-
-transcode(SrvId, File) ->
-    case nkfile:download(SrvId, File) of
-        {ok, File, _Bin} ->
+transcode(SrvId, #{obj_id := Id, <<"file">> := #{ content_type := Mime}=File}) ->
+    case nkdomain_file_obj:get_store(File) of
+        {ok, #{class := Store}} ->
             case SrvId:config() of
                 #{ transcoder := Transcoder } ->
-                    SrvId:nktranscoder_transcode(SrvId, Transcoder, File);
+                    Args = #{ input => #{ type => Store,
+                                       input => Id },
+                              output => #{ type => Store,
+                                          output => nkdomain_file_obj:make_file_id() },
+                              content_type => Mime },
+                    SrvId:nktranscoder_transcode(SrvId, Transcoder, Args);
                 _ ->
                     {error, missing_transcoder_config}
             end;
-        {error, Error} ->
+        {error, Error} -> 
             {error, Error}
     end.

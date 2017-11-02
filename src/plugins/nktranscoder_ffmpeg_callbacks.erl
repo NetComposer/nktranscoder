@@ -11,21 +11,21 @@
 plugin_deps() -> 
     [nktranscoder].
 
-nktranscoder_transcode(_SrvId, #{ class := ffmpeg }=Transcoder, _File) ->
-    InputType = s3,
-    OutputType = s3,
-    InputPath = <<"some/file">>,
-    OutputPath = <<"some/other/file">>,
-    Mime = <<"video/x-flv">>,
-    Req = #{ input => #{ type => InputType,
-                         path => InputPath },
-             output => #{ type => OutputType,
-                          path => OutputPath },
-             content_type => Mime},
-    {ok, Pid } = nktranscoder_protocol:start(Transcoder, ?MODULE),
-    nktranscoder_protocol:send(Pid, Req);
+nktranscoder_transcode(_SrvId, #{ class := ffmpeg }=Transcoder, Args) -> 
+    case Args of 
+        #{ input := #{ type := _,
+                       path := _},
+           output := #{ type := _,
+                        path := _},
+           content_type := _} ->
+            {ok, Pid } = nktranscoder_protocol:start(Transcoder, ?MODULE),
+            nktranscoder_protocol:send(Pid, Args);
+        _ -> 
+         {error, invalid_args}
+    end;
+    
 
-nktranscoder_transcode(_SrvId, _Transcoder, _File) ->
+nktranscoder_transcode(_SrvId, _Transcoder, _Args) ->
     continue.
 
 transcoder_disconnected(Pid) ->
