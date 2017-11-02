@@ -20,7 +20,7 @@ nktranscoder_transcode(_SrvId, #{ class := ffmpeg }=Transcoder, Args) ->
            content_type := _} ->
             case nktranscoder_ffmpeg_protocol:start(Transcoder, ?MODULE) of
                 {ok, Pid } -> 
-                    nktranscoder_protocol:send(Pid, Args),
+                    nktranscoder_ffmpeg_protocol:send(Pid, Args),
                     {ok, Pid};
                 {error, Error } ->
                     {ok, Error}
