@@ -26,9 +26,9 @@ transcode(SrvId, #{obj_id := FileId, <<"file">> := #{ content_type := Mime}=File
             case SrvId:config() of
                 #{ transcoder := Transcoder } ->
                     Args = #{ input => #{ type => Store,
-                                       input => FileId },
+                                          path => FileId },
                               output => #{ type => Store,
-                                          output => nkdomain_file_obj:make_file_id() },
+                                           path => nkdomain_file_obj:make_file_id() },
                               content_type => Mime },
                     SrvId:nktranscoder_transcode(SrvId, Transcoder, Args);
                 _ ->
