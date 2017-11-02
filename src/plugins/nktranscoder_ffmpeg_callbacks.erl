@@ -18,8 +18,14 @@ nktranscoder_transcode(_SrvId, #{ class := ffmpeg }=Transcoder, Args) ->
            output := #{ type := _,
                         path := _},
            content_type := _} ->
-            {ok, Pid } = nktranscoder_ffmpeg_protocol:start(Transcoder, ?MODULE),
-            nktranscoder_protocol:send(Pid, Args);
+            case nktranscoder_ffmpeg_protocol:start(Transcoder, ?MODULE) of
+                {ok, Pid } -> 
+                    nktranscoder_protocol:send(Pid, Args),
+                    {ok, Pid};
+                {error, Error } ->
+                    {ok, Error}
+            end;
+            
         _ -> 
          {error, invalid_args}
     end;
