@@ -17,7 +17,7 @@
 %% under the License.
 %%
 %% -------------------------------------------------------------------
--module(nktranscoder_protocol).
+-module(nktranscoder_ffmpeg_protocol).
 -export([register/0]).
 -export([transports/1, default_port/1, conn_init/1, conn_parse/3, conn_encode/2]).
 -export([start/2, send/2]).

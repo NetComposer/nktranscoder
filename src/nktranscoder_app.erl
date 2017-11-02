@@ -28,7 +28,7 @@ start(_StartType, _StartArgs) ->
         {ok, _} ->
             {ok, Vsn} = application:get_key(?APP, vsn),
             lager:info("NkTranscoder v~s is starting", [Vsn]),
-            ok = nktranscoder_protocol:register(),
+            ok = nktranscoder_ffmpeg_protocol:register(),
             {ok, Pid} = nktranscoder_sup:start_link(),
             {ok, Pid};
         {error, Error} ->
