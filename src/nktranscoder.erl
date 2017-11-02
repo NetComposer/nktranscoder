@@ -20,13 +20,13 @@
 -module(nktranscoder).
 -export([transcode/2]).
 
-transcode(SrvId, #{obj_id := Id, <<"file">> := #{ content_type := Mime}=File}) ->
+transcode(SrvId, #{obj_id := FileId, <<"file">> := #{ content_type := Mime}=File}) ->
     case nkdomain_file_obj:get_store(File) of
-        {ok, #{class := Store}} ->
+        {ok, _StoreId, #{class := Store}} ->
             case SrvId:config() of
                 #{ transcoder := Transcoder } ->
                     Args = #{ input => #{ type => Store,
-                                       input => Id },
+                                       input => FileId },
                               output => #{ type => Store,
                                           output => nkdomain_file_obj:make_file_id() },
                               content_type => Mime },
