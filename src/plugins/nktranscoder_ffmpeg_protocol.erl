@@ -23,6 +23,7 @@
 -export([start/2, send/2]).
 -export([behaviour_info/1]).
 -include_lib("nkpacket/include/nkpacket.hrl").
+-include("nktranscoder.hrl").
 
 behaviour_info(callbacks) ->
     [{transcoder_connected, 1}, 
@@ -60,6 +61,7 @@ start(Server, Callback, Headers) ->
       idle_timeout => 30000,
       user => #{ callback => Callback },
       debug => true },
+    ?INFO("Connecting to ~p", [Server]),    
     case nkpacket:connect(Server, ConnOpts) of
         {ok, Pid} -> 
             {ok, Pid};

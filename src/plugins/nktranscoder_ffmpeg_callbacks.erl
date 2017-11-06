@@ -23,7 +23,7 @@ nktranscoder_transcode(_SrvId, #{ class := ffmpeg }=Transcoder, Args) ->
                     nktranscoder_ffmpeg_protocol:send(Pid, Args),
                     {ok, Pid};
                 {error, Error } ->
-                    {ok, Error}
+                    {error, Error}
             end;
             
         _ -> 
