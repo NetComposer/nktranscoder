@@ -14,10 +14,10 @@ plugin_deps() ->
 nktranscoder_transcode(_SrvId, #{ class := ffmpeg }=Transcoder, Args) -> 
     case Args of 
         #{ input := #{ type := _,
-                       path := _},
+                       path := _, 
+                       content_type := _ },
            output := #{ type := _,
-                        path := _},
-           content_type := _} ->
+                        path := _}} ->
             case nktranscoder_ffmpeg_protocol:start(Transcoder, ?MODULE) of
                 {ok, Pid } -> 
                     nktranscoder_ffmpeg_protocol:send(Pid, Args),
