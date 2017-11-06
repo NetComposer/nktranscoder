@@ -34,10 +34,10 @@ behaviour_info(callbacks) ->
      {transcoder_progress, 2}
     ].
 
-transports(_) -> [wss, ws].
+transports(_) -> [ws].
 
-default_port(ws) -> 80;
-default_port(wss) -> 443.
+default_port(ws) -> 3000.
+%%default_port(wss) -> 443.
 
 register() -> 
     nkpacket:register_protocol(transcoder, ?MODULE).
