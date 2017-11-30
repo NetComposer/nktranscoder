@@ -36,9 +36,9 @@ where:
 * `scheme` is set to `transcoder` by default. This implementation relies on NkPACKET's websocket client using the `transcoder://` protocol.
 
 
-## Sample video transcoding request
+## Starting a new video transcoding
 
-Starting a new transcoding is as easy as doing:
+A request for a new transcoding looks like this:
 
 ```
 Req => #{ callback => { M, F, A },
@@ -57,11 +57,11 @@ where:
 
 * `InputFileId` is the id of the input file, to be read from Netcomposer's S3 file store.
 * `OutputFileId` is the file id for the result from the the transcoding process, to be written to Netcomposer's S3 file store.
-
+* `Pid` is the Erlang process that owns the transcoding process.
 
 ## Receiving video transcoding events
 
-In the above example, `callback` is an Erlang module (M), function (F) and arguments (A) tuple where to notify transcodings events to. The specified list of arguments will be merged with the event data received from the transcoder provider. This is so that the application code can correlate transcoder events to the appropriate job. 
+In the above example, `callback` is an Erlang module (M), function (F) and arguments (A) tuple where to notify transcodings events to. The specified list of arguments will be merged with the event data (Status, Pid and ExtraInfo), received from the transcoder provider. This is so that the application code can correlate transcoder events to the appropriate job request.
 
 If for example we call the transcoding with: 
 
@@ -81,7 +81,8 @@ then we can write a callback module in the form:
 -export([transcoding_event/1]).
 
 transcoding_event([ JobId, Status, Pid, ExtraInfo]) ->
-    io:format("got transcoding event ~p with Pid: ~p, JobId: ~p, Msg: ~p", [Status, Pid, JobId, ExtraInfo]", [JobId, Status, Pid, ExtraInfo]).
+    io:format("got transcoding event ~p with Pid: ~p, JobId: ~p, Msg: ~p~n", 
+              [Status, Pid, JobId, ExtraInfo]).
 ```
 
 where:
