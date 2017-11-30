@@ -17,22 +17,9 @@
 %% under the License.
 %%
 %% -------------------------------------------------------------------
--module(nktranscoder_ffmpeg_callbacks).
--export([nktranscoder_transcode/3, 
-         nktranscoder_parse_transcoder/2]).
+-module(nktranscoder_netscale_ffmpeg_plugin).
+-export([plugin_deps/0]).
 -include("../../include/nktranscoder.hrl").
 
-nktranscoder_parse_transcoder(Config, Opts) ->
-    nktranscoder_ffmpeg:parse_transcoder(Config, Opts).
-
-nktranscoder_transcode(_SrvId, #{ class := ffmpeg }=Transcoder, #{callback := CB}=Args) ->
-    Args2 = maps:remove(callback, Args),
-    case nktranscoder_ffmpeg_protocol:start(Transcoder, CB) of
-        {ok, Pid} ->
-            nktranscoder_ffmpeg_protocol:send(Pid, Args2);
-        {error, Error } ->
-            {error, Error}
-    end;
-
-nktranscoder_transcode(_SrvId, _Transcoder, _Args) ->
-    continue.
+plugin_deps() ->
+    [nktranscoder].

@@ -17,7 +17,7 @@
 %% under the License.
 %%
 %% -------------------------------------------------------------------
--module(nktranscoder_ffmpeg).
+-module(nktranscoder_netscale_ffmpeg).
 -export([parse_transcoder/2]).
 
 parse_transcoder(Data, Opts) ->
