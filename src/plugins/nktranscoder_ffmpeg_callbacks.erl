@@ -1,53 +1,33 @@
 -module(nktranscoder_ffmpeg_callbacks).
--export([plugin_deps/0, nktranscoder_transcode/3]).
--export([transcoder_disconnected/1,
-         transcoder_connected/1,
-         transcoder_error/2,
-         transcoder_invalid/2,
-         transcoder_finished/2,
-         transcoder_progress/2]).
--include("nktranscoder.hrl").
+-export([nktranscoder_transcode/3, 
+         nktranscoder_parse_transcoder/2,
+         nktranscoder_event/1]).
+-include("../../include/nktranscoder.hrl").
 
-plugin_deps() -> 
-    [nktranscoder].
+nktranscoder_parse_transcoder(Config, Opts) ->
+    nktranscoder_ffmpeg:parse_transcoder(Config, Opts).
 
-nktranscoder_transcode(_SrvId, #{ class := ffmpeg }=Transcoder, Args) -> 
-    case Args of 
-        #{ input := #{ type := _,
-                       path := _, 
-                       content_type := _ },
-           output := #{ type := _,
-                        path := _}} ->
-            case nktranscoder_ffmpeg_protocol:start(Transcoder, ?MODULE) of
-                {ok, Pid } -> 
-                    nktranscoder_ffmpeg_protocol:send(Pid, Args),
-                    {ok, Pid};
-                {error, Error } ->
-                    {error, Error}
-            end;
-            
-        _ -> 
-         {error, invalid_args}
+nktranscoder_callback() -> ?MODULE.
+
+nktranscoder_transcode(_SrvId, #{ class := ffmpeg }=Transcoder, #{job_id := JobId}=Args) ->
+    CB = { nktranscoder_callback(), nktranscoder_event, [JobId]},
+    case nktranscoder_ffmpeg_protocol:start(Transcoder, CB) of
+        {ok, Pid} ->
+            nktranscoder_ffmpeg_protocol:send(Pid, Args);
+        {error, Error } ->
+            {error, Error}
     end;
-    
 
 nktranscoder_transcode(_SrvId, _Transcoder, _Args) ->
     continue.
 
-transcoder_disconnected(Pid) ->
-    ?INFO("transcoding disconnected Pid: ~p", [Pid]).
-
-transcoder_connected(Pid) ->
-    ?INFO("transcoding connected with Pid: ~p", [Pid]).
-
-transcoder_error(Pid, Msg) ->
-    ?INFO("transcoding error ~p with Pid: ~p", [Msg, Pid]).
-
-transcoder_invalid(Pid, Msg) ->
-    ?INFO("transcoding invalid ~p with Pid: ~p", [Msg, Pid]).
-
-transcoder_finished(Pid, Msg) ->
-    ?INFO("transcoding finished ~p with Pid: ~p", [Msg, Pid]).
-
-transcoder_progress(Pid, Msg) ->
-    ?INFO("transcoding progress ~p with Pid: ~p", [Msg, Pid]).
+nktranscoder_event([JobId, Ev, Pid, Msg]) ->
+    ?DEBUG("=> got event ~p with Pid: ~p, JobId: ~p, Msg: ~p", [Ev, Pid, JobId, Msg]),
+    case nkdomain_transcoder_job_obj:update(JobId, #{ status => Ev,
+                                          pid => Pid,
+                                          info => Msg }) of 
+        ok -> 
+            ?DEBUG("succesfully updated transcoding job ~p", [JobId]);
+        {error, Error} ->
+            ?ERROR("error while updating transcoding job ~p: ~p", [JobId, Error])
+    end.

@@ -18,22 +18,13 @@
 %%
 %% -------------------------------------------------------------------
 -module(nktranscoder).
--export([transcode/2]).
+-export([parse_transcoder/3,
+         transcode/3]).
+-include("nktranscoder.hrl").
 
-transcode(SrvId, #{obj_id := FileId, <<"file">> := #{ content_type := Mime}=File}) ->
-    case nkdomain_file_obj:get_store(File) of
-        {ok, _StoreId, #{class := Store}} ->
-            case SrvId:config() of
-                #{ transcoder := Transcoder } ->
-                    Args = #{ input => #{ type => Store,
-                                          path => FileId, 
-                                          content_type => Mime },
-                              output => #{ type => Store,
-                                           path => nkdomain_file_obj:make_file_id() }},
-                    SrvId:nktranscoder_transcode(SrvId, Transcoder, Args);
-                _ ->
-                    {error, missing_transcoder_config}
-            end;
-        {error, Error} -> 
-            {error, Error}
-    end.
+transcode(SrvId, Transcoder, Req) -> 
+    SrvId:nktranscoder_transcode(SrvId, Transcoder, Req).
+
+parse_transcoder(SrvId, Config, Opts) ->
+    SrvId:nktranscoder_parse_transcoder(Config, Opts).
+

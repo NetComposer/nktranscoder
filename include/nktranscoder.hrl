@@ -23,3 +23,9 @@
 -define(DEBUG(Txt, Args), ?LOG(debug, Txt, Args)).
 -define(ERROR(Txt, Args), ?LOG(error, Txt, Args)).
 -define(WARN(Txt, Args), ?LOG(warn, Txt, Args)).
+
+
+-define(TRANSCODER_SERVER, <<"transcoder.server">>).
+-define(TRANSCODER_JOB, <<"transcoder.job">>).
+-define(TRANSCODER_JOB_UPDATES, <<"transcoder.job.updates">>).
+-define(TRANSCODER_EVENT_SUBCLASS, <<"transcoder">>).

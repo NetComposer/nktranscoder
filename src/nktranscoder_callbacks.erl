@@ -1,9 +1,10 @@
 -module(nktranscoder_callbacks).
--export([nktranscoder_transcode/3]).
+-export([nktranscoder_transcode/3, nktranscoder_parse_transcoder/2]).
 -include("nktranscoder.hrl").
 
--spec nktranscoder_transcode(nkservice:id(), nktranscoder:transcoder(), nkfile:file()) ->
-    ok | {error, term()}.
+nktranscoder_transcode(_SrvId, _Transcoder, _Req) ->
+    {error, please_implement_me}.
 
-nktranscoder_transcode(_SrvId, _Transcoder, _File) ->
-    {error, invalid_transcoder}.
+nktranscoder_parse_transcoder(_Config, _Opts) ->
+    {error, please_implement_me}.
+

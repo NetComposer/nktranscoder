@@ -18,8 +18,7 @@
 %%
 %% -------------------------------------------------------------------
 -module(nktranscoder_sample).
--behaviour(nktranscoder_protocol).
--export([test/0]).
+-export([transcode/2]).
 -export([transcoder_connected/1,
         transcoder_disconnected/1,
         transcoder_error/2,
@@ -28,16 +27,20 @@
         transcoder_progress/2
         ]).
 
-test() -> 
-    ok = nktranscoder_protocol:register(),
-    Config = #{ config => #{ server => <<"transcoder://s1.netc.io/transcode">>,
+transcode(File, Mime) ->
+    ok = nktranscoder_ffmpeg_protocol:register(),
+    Config = #{ config => #{ server => <<"transcoder://localhost:3000/transcode">>,
                              user => <<"netcomposer">>,
                              password => <<"burgerenhavacoyunawint">>}},
-    
-    {ok, Pid } = nktranscoder:connect(Config, ?MODULE),
-    nktranscoder:transcode(Pid, {s3, <<"/data/file-6kCmH0rnT8VRluj9eNHqf3TG3zB">>}, 
-                                {s3, <<"/data/erlang-test.mp4">>},
-                                <<"video/x-flv">> ).
+
+    Args = #{ input => #{ type => s3,
+                          path => File,
+                          content_type => Mime },
+              output => #{ type => s3,
+                           path => nkdomain_file_obj:make_file_id() }},
+
+    {ok, Pid } = nktranscoder_ffmpeg_protocol:start(Config, ?MODULE),
+    nktranscoder_ffmpeg_protocol:send(Pid, Args).
 
 transcoder_disconnected(Pid) ->
     io:format("transcoder disconnected Pid: ~p~n", [Pid]).
