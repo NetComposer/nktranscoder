@@ -18,7 +18,7 @@ There are two main functions offered by this plugin:
 
 ## Sample transcoder configuration
 
-A transcoder describes what kind of underlying implementation or provider will be used to perform actual video conversion. As an example, `nktranscoder_ffmpeg` supports the following syntax:
+A transcoder describes what kind of underlying implementation or provider will be used to perform actual video conversion. As an example, `nktranscoder_netscale_ffmpeg` supports the following syntax:
 
 ```
 Processor = #{ class => ffmpeg,
@@ -93,4 +93,4 @@ where:
 
 ## Plugins
 
-* `nktranscoder_ffmpeg`, based on a custom FFMPEG based microservice with a Websocket api. 
+* `nktranscoder_netscale_ffmpeg`, based on a custom FFMPEG based microservice with a Websocket api. 
