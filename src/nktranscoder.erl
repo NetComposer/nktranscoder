@@ -1,6 +1,6 @@
 %% -------------------------------------------------------------------
 %%
-%% Copyright (c) 2017 Carlos Gonzalez Florido.  All Rights Reserved.
+%% Copyright (c) 2017 NetScale, SL.  All Rights Reserved.
 %%
 %% This file is provided to you under the Apache License,
 %% Version 2.0 (the "License"); you may not use this file
@@ -21,6 +21,23 @@
 -export([parse_transcoder/3,
          transcode/3]).
 -include("nktranscoder.hrl").
+
+-type transcoder() :: #{ class => atom,
+                         config => map() }.
+-type content_type() :: binary.
+-type store_type() :: binary.
+-type file_info() :: #{ type => store_type(),
+                      path => binary,
+                      content_type => content_type() }.
+-type req() :: #{ callback => mfa(),
+                  input => file_info() }.
+
+
+-spec parse_transcoder(nkservice:id(), map(), map()) ->
+    {ok, transcoder()} | {error, term()}.
+
+-spec transcode(nkservice:id(), transcoder(), req()) ->
+    {ok, pid()} | {error, term()}.
 
 transcode(SrvId, Transcoder, Req) -> 
     SrvId:nktranscoder_transcode(SrvId, Transcoder, Req).

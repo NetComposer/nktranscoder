@@ -1,6 +1,6 @@
 %% -------------------------------------------------------------------
 %%
-%% Copyright (c) 2017 Carlos Gonzalez Florido.  All Rights Reserved.
+%% Copyright (c) 2017 NetScale, SL.  All Rights Reserved.
 %%
 %% This file is provided to you under the Apache License,
 %% Version 2.0 (the "License"); you may not use this file
@@ -21,23 +21,12 @@
 -export([register/0]).
 -export([transports/1, default_port/1, conn_init/1, conn_parse/3, conn_encode/2]).
 -export([start/2, send/2]).
--export([behaviour_info/1]).
 -include_lib("nkpacket/include/nkpacket.hrl").
 -include("../../include/nktranscoder.hrl").
 
-behaviour_info(callbacks) ->
-    [{transcoder_connected, 1}, 
-     {transcoder_disconnected, 1},
-     {transcoder_error, 2},
-     {transcoder_invalid, 2},
-     {transcoder_finished, 2},
-     {transcoder_progress, 2}
-    ].
-
-transports(_) -> [ws].
-
-default_port(ws) -> 3000.
-%%default_port(wss) -> 443.
+transports(_) -> [ws, wss].
+default_port(ws) -> 3000;
+default_port(wss) -> 443.
 
 register() -> 
     nkpacket:register_protocol(transcoder, ?MODULE).

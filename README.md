@@ -41,7 +41,7 @@ where:
 A request for a new transcoding looks like this:
 
 ```
-Req => #{ callback => { M, F, A },
+Req => #{ callback => {M, F, A},
           input => #{ type => <<"s3">>,
                       path => InputFileId,
                       content_type => <<"video/avi">> },
@@ -67,7 +67,7 @@ If for example we call the transcoding with:
 
 
 ```
-Req => #{ callback => { mymodule, transcoding_event, [ JobId ] },
+Req => #{ callback => { mymodule, transcoding_event, [JobId] },
           ... 
         },
 
@@ -87,10 +87,10 @@ transcoding_event([ JobId, Status, Pid, ExtraInfo]) ->
 
 where:
 
-* `Status` is one of: `<<"progress">>`, `<<"finished">>`, or `<<"error">>`.
+* `Status` is one of: `<<"invalid">>`, `<<"progress">>`, `<<"finished">>`, or `<<"error">>`.
 * `Pid` is the Erlang process that owns the transcoding process.
 * `ExtraInfo` is an Erlang term holding extra info about the transcoding processing. 
 
 ## Plugins
 
-* `nktranscoder_ffmpeg`, based on a remote FFMPEG based microservice with a Websocket api. 
+* `nktranscoder_ffmpeg`, based on a custom FFMPEG based microservice with a Websocket api. 
