@@ -19,7 +19,7 @@
 %% -------------------------------------------------------------------
 
 -module(nktranscoder_callbacks).
--export([msg/1]).
+-export([msg/1, transcoder_operation/5]).
 -include("nktranscoder.hrl").
 
 
@@ -29,5 +29,12 @@
 
 msg(_)   		                    -> continue.
 
+
+transcoder_operation(_SrvId, [<<"echo">>], _Params, CT, File) ->
+    lager:error("NKLOG NEW ECHO"),
+    {ok, {CT, File}};
+
+transcoder_operation(_SrvId, _, _Params, _CT, _File) ->
+    {error, operation_invalid}.
 
 
