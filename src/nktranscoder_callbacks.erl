@@ -17,13 +17,17 @@
 %% under the License.
 %%
 %% -------------------------------------------------------------------
+
 -module(nktranscoder_callbacks).
--export([nktranscoder_transcode/3, nktranscoder_parse_transcoder/3]).
+-export([msg/1]).
 -include("nktranscoder.hrl").
 
-nktranscoder_transcode(_SrvId, _Transcoder, _Req) ->
-    {error, please_implement_me}.
 
-nktranscoder_parse_transcoder(_SrvId, _Config, _Opts) ->
-    {error, please_implement_me}.
+%% ===================================================================
+%% Msg Callbacks
+%% ===================================================================
+
+msg(_)   		                    -> continue.
+
+
 

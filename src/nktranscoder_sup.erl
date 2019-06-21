@@ -21,10 +21,16 @@
 -behaviour(supervisor).
 -export([start_link/0]).
 -export([init/1]).
--define(SERVER, ?MODULE).
 
+%% @private
 start_link() ->
-    supervisor:start_link({local, ?SERVER}, ?MODULE, []).
+    ChildsSpec = [
+    ],
+    supervisor:start_link({local, ?MODULE}, ?MODULE,
+        {{one_for_one, 10, 60}, ChildsSpec}).
 
-init([]) ->
-    {ok, { {one_for_all, 0, 1}, []} }.
+%% @private
+init(ChildSpecs) ->
+    {ok, ChildSpecs}.
+
+

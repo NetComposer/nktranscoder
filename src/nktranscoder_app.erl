@@ -17,28 +17,69 @@
 %% under the License.
 %%
 %% -------------------------------------------------------------------
+
 -module(nktranscoder_app).
+-author('Carlos Gonzalez <carlosj.gf@gmail.com>').
 -behaviour(application).
--export([start/2, stop/1]).
+
+-export([start/0, start/2, stop/1]).
+-export([get/1, get/2, put/2, del/1]).
+
 -include("nktranscoder.hrl").
 
-start(_StartType, _StartArgs) ->
-    Syntax = #{transcoders => {list, map}},
+-define(APP, nktranscoder).
+-compile({no_auto_import, [get/1, put/2]}).
+
+%% ===================================================================
+%% Private
+%% ===================================================================
+
+%% @doc Starts NkSERVER stand alone.
+-spec start() ->
+    list().
+
+start() ->
+    application:ensure_all_started(?APP).
+
+
+%% @doc
+start(_Type, _Args) ->
+    Syntax = #{
+    },
     case nklib_config:load_env(?APP, Syntax) of
         {ok, _} ->
-            {ok, Vsn} = application:get_key(?APP, vsn),
-            lager:info("NkTranscoder v~s is starting", [Vsn]),
-            ok = nktranscoder_netscale_ffmpeg_protocol:register(),
-            register_types(),
             {ok, Pid} = nktranscoder_sup:start_link(),
+            {ok, Vsn} = application:get_key(nktranscoder, vsn),
+            lager:info("NkSERVER TRANSCODER v~s has started.", [Vsn]),
+            nkserver_util:register_package_class(<<"Transcoder">>, nktranscoder),
             {ok, Pid};
         {error, Error} ->
             lager:error("Error parsing config: ~p", [Error]),
-            error({syntax_error, Error})
+            error(Error)
     end.
 
-stop(_State) ->
+
+
+%% @private OTP standard stop callback
+stop(_) ->
     ok.
 
-register_types() ->
-    ok.
+
+%% @doc gets a configuration value
+get(Key) ->
+    get(Key, undefined).
+
+
+%% @doc gets a configuration value
+get(Key, Default) ->
+    nklib_config:get(?APP, Key, Default).
+
+
+%% @doc updates a configuration value
+put(Key, Value) ->
+    nklib_config:put(?APP, Key, Value).
+
+
+%% @doc updates a configuration value
+del(Key) ->
+    nklib_config:del(?APP, Key).

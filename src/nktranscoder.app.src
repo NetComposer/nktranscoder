@@ -1,17 +1,12 @@
-{application, nktranscoder,
- [{description, "An OTP application"},
-  {vsn, "0.1.0"},
-  {registered, []},
-  {mod, { nktranscoder_app, []}},
-  {applications,
-   [kernel,
-    stdlib,
-    nkpacket
-   ]},
-  {env,[]},
-  {modules, []},
-
-  {maintainers, []},
-  {licenses, ["Apache 2.0"]},
-  {links, []}
- ]}.
+{application, nktranscoder, [
+    {description, "NkSERVER TRANSCODER Package"},
+    {vsn, "develop"},
+    {modules, []},
+    {registered, []},
+    {mod, {nktranscoder_app, []}},
+    {applications, [
+        nkserver
+    ]},
+    {env, [
+    ]}
+]}.
