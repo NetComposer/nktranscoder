@@ -31,7 +31,6 @@ msg(_)   		                    -> continue.
 
 
 transcoder_operation(_SrvId, [<<"echo">>], _Params, CT, File) ->
-    lager:error("NKLOG NEW ECHO"),
     {ok, {CT, File}};
 
 transcoder_operation(_SrvId, _, _Params, _CT, _File) ->
