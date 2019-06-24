@@ -5,6 +5,7 @@
 %% Defines
 %% ===================================================================
 
+-define(REQ_SPAN, nktranscoder).
 
 
 -define(PACKAGE_CLASS_REST, <<"Transcoder">>).

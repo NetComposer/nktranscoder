@@ -30,10 +30,14 @@
 msg(_)   		                    -> continue.
 
 
-transcoder_operation(_SrvId, [<<"echo">>], _Params, CT, File) ->
-    {ok, {CT, File}};
+transcoder_operation(SrvId, <<"echo">>, CT, File, Params) ->
+    BaseSpan = maps:get(ot_span_id, Params, undefined),
+    nkserver_ot:new(?MODULE, SrvId, <<"NkTranscoder::Echo">>, BaseSpan),
+    nkserver_ot:log(?MODULE, "performing 'echo'"),
+    nkserver_ot:finish(?MODULE),
+    {ok, {CT, File, #{}}};
 
-transcoder_operation(_SrvId, _, _Params, _CT, _File) ->
+transcoder_operation(_SrvId, _Op, _CT, _File, _Params) ->
     {error, operation_invalid}.
 
 

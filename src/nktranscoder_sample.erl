@@ -161,7 +161,6 @@ call_echo(Params, Hds, Body) ->
 
 %% @private
 call(Cmd, Params, Hds, Body) ->
-    lager:error("NKLOG PARAMS ~p", [Params]),
     Params2 = [
         list_to_binary([
             nklib_util:to_binary(K),
